@@ -46,5 +46,13 @@ visualizations/
 .env
 .env.local
 
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Results (keep directory structure, ignore old evaluation_results)
 /evaluation_results
+
+# Editor
 .claude/
