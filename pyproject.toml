@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hadc-bench"
+version = "0.1.0"
+description = "Agentic Forecasting Benchmark using LangGraph"
+requires-python = ">=3.10"
+dependencies = [
+    "langchain-core>=0.1.0",
+    "langgraph>=0.0.60",
+    "langchain-anthropic>=0.1.0",
+    "langchain-openai>=0.1.0",
+    "langchain-google-genai>=0.1.0",
+    "langchain-xai>=0.1.0",
+    "google-search-results>=2.4.2",
+    "requests>=2.31.0",
+    "python-dotenv>=1.0.0",
+]
+
+[project.scripts]
+hadc-bench = "cli:main"
+
+[tool.setuptools]
+py-modules = ["cli", "config", "__init__"]
+
+[tool.setuptools.packages.find]
+where = ["."]
