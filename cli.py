@@ -225,7 +225,7 @@ def cmd_run(args: argparse.Namespace) -> int:
 
     # When verbose is on, silence web_search logs to avoid interleaving
     if verbose_enabled:
-        logging.getLogger("kalshi_agentic.tools.web_search").setLevel(logging.WARNING)
+        logging.getLogger("tools.web_search").setLevel(logging.WARNING)
 
     # Progress callback (only show when not verbose)
     def progress(message: str, current: int, total: int) -> None:
@@ -489,7 +489,7 @@ def cmd_list_models(args: argparse.Namespace) -> int:
 
     print("\n" + "=" * 60)
     print("\nTo run with a model:")
-    print("  python -m kalshi_agentic.cli run --model <model-name>")
+    print("  python -m cli run --model <model-name>")
 
     return 0
 
