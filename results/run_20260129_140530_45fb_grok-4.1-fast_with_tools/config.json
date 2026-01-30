@@ -1,0 +1,26 @@
+{
+  "run_id": "run_20260129_140530_45fb_grok-4.1-fast_after_fix",
+  "started_at": "2026-01-29T14:05:30.034389",
+  "completed_at": "2026-01-29T14:21:11.490230",
+  "status": "completed",
+  "model_ids": [
+    "grok-4.1-fast"
+  ],
+  "strategies": [
+    "agentic"
+  ],
+  "benchmark_dataset": "categorized_data/benchmark_dataset_v2.json",
+  "checkpoints": [
+    "open_plus_1",
+    "pct_25",
+    "pct_50",
+    "pct_75",
+    "close_minus_1"
+  ],
+  "categories": null,
+  "max_iterations": 100,
+  "max_search_results": 5,
+  "parallelism": 50,
+  "tools_enabled": true,
+  "n_samples": 750
+}

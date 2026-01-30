@@ -100,8 +100,8 @@ def create_parser() -> argparse.ArgumentParser:
     run_parser.add_argument(
         "--output",
         type=str,
-        default="agentic_results",
-        help="Output directory for results (default: agentic_results)",
+        default="results",
+        help="Output directory for results (default: results)",
     )
     run_parser.add_argument(
         "--parallelism",
@@ -273,6 +273,16 @@ def cmd_run(args: argparse.Namespace) -> int:
                 else:
                     result_preview = content
                 lines.append(f"  [{step}] TOOL RESULT: {tool_name}")
+                for line in result_preview.split('\n')[:10]:  # Limit lines
+                    lines.append(f"      {line}")
+
+            elif msg_type == "FunctionMessage":
+                step += 1
+                if len(content) > 500:
+                    result_preview = content[:500].rsplit(' ', 1)[0] + "..."
+                else:
+                    result_preview = content
+                lines.append(f"  [{step}] FUNCTION RESULT:")
                 for line in result_preview.split('\n')[:10]:  # Limit lines
                     lines.append(f"      {line}")
 

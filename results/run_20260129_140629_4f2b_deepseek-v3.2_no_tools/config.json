@@ -1,0 +1,26 @@
+{
+  "run_id": "run_20260129_140629_4f2b_deepseek-v3.2_no_tools_after_fix",
+  "started_at": "2026-01-29T14:06:29.462225",
+  "completed_at": "2026-01-29T14:13:59.906731",
+  "status": "completed",
+  "model_ids": [
+    "deepseek-v3.2"
+  ],
+  "strategies": [
+    "agentic"
+  ],
+  "benchmark_dataset": "categorized_data/benchmark_dataset_v2.json",
+  "checkpoints": [
+    "open_plus_1",
+    "pct_25",
+    "pct_50",
+    "pct_75",
+    "close_minus_1"
+  ],
+  "categories": null,
+  "max_iterations": 100,
+  "max_search_results": 5,
+  "parallelism": 50,
+  "tools_enabled": false,
+  "n_samples": 750
+}

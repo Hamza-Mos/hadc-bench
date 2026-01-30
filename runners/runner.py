@@ -335,6 +335,13 @@ class AgenticResultStorage:
                     "tool": tool_name,
                     "content": content[:content_limit] if content else "",
                 })
+            elif msg_type == "FunctionMessage":
+                trajectory.append({
+                    "step": step,
+                    "node": "tools",
+                    "action": "function_result",
+                    "content": content[:500] if content else "",
+                })
             else:
                 # Generic message
                 trajectory.append({
@@ -606,8 +613,8 @@ class AgenticBenchmarkRunner:
         # Create run ID
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         short_id = uuid.uuid4().hex[:4]
-        suffix = "_no_tools" if not config.tools_enabled else ""
-        run_id = f"run_{timestamp}_{short_id}_{model_id}{suffix}_after_fix"
+        suffix = "_with_tools" if config.tools_enabled else "_no_tools"
+        run_id = f"run_{timestamp}_{short_id}_{model_id}{suffix}"
 
         # Initialize storage
         storage = AgenticResultStorage(

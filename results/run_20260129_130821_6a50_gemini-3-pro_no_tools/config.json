@@ -1,0 +1,26 @@
+{
+  "run_id": "run_20260129_130821_6a50_gemini-3-pro_no_tools_after_fix",
+  "started_at": "2026-01-29T13:08:21.527108",
+  "completed_at": "2026-01-29T13:26:45.614190",
+  "status": "completed",
+  "model_ids": [
+    "gemini-3-pro"
+  ],
+  "strategies": [
+    "agentic"
+  ],
+  "benchmark_dataset": "categorized_data/benchmark_dataset_v2.json",
+  "checkpoints": [
+    "open_plus_1",
+    "pct_25",
+    "pct_50",
+    "pct_75",
+    "close_minus_1"
+  ],
+  "categories": null,
+  "max_iterations": 100,
+  "max_search_results": 5,
+  "parallelism": 50,
+  "tools_enabled": false,
+  "n_samples": 750
+}

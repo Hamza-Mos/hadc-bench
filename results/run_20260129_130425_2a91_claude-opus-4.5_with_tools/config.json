@@ -1,0 +1,26 @@
+{
+  "run_id": "run_20260129_130425_2a91_claude-opus-4.5_after_fix",
+  "started_at": "2026-01-29T13:04:25.482405",
+  "completed_at": "2026-01-29T13:30:19.557911",
+  "status": "completed",
+  "model_ids": [
+    "claude-opus-4.5"
+  ],
+  "strategies": [
+    "agentic"
+  ],
+  "benchmark_dataset": "categorized_data/benchmark_dataset_v2.json",
+  "checkpoints": [
+    "open_plus_1",
+    "pct_25",
+    "pct_50",
+    "pct_75",
+    "close_minus_1"
+  ],
+  "categories": null,
+  "max_iterations": 100,
+  "max_search_results": 5,
+  "parallelism": 50,
+  "tools_enabled": true,
+  "n_samples": 750
+}

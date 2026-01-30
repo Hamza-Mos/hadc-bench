@@ -1,0 +1,25 @@
+{
+  "run_id": "run_20260129_202148_d08e_trinity-large-preview_after_fix",
+  "started_at": "2026-01-29T20:21:48.925392",
+  "status": "running",
+  "model_ids": [
+    "trinity-large-preview"
+  ],
+  "strategies": [
+    "agentic"
+  ],
+  "benchmark_dataset": "categorized_data/benchmark_dataset_v2.json",
+  "checkpoints": [
+    "open_plus_1",
+    "pct_25",
+    "pct_50",
+    "pct_75",
+    "close_minus_1"
+  ],
+  "categories": null,
+  "max_iterations": 100,
+  "max_search_results": 5,
+  "parallelism": 20,
+  "tools_enabled": true,
+  "n_samples": 750
+}

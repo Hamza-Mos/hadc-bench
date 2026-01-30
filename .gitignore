@@ -47,5 +47,4 @@ visualizations/
 .env.local
 
 /evaluation_results
-/results 
 .claude/

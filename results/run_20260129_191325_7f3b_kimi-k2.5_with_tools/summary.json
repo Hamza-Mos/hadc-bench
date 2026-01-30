@@ -1,0 +1,130 @@
+{
+  "run_id": "run_20260129_191325_7f3b_kimi-k2.5_after_fix",
+  "started_at": "2026-01-29T19:13:25.259646",
+  "completed_at": "2026-01-29T20:17:17.898721",
+  "status": "completed",
+  "total_predictions": 750,
+  "parse_success_rate": 0.9853333333333333,
+  "beats_market_rate": 0.396,
+  "tie_rate": 0.024,
+  "config": {
+    "model_ids": [
+      "kimi-k2.5"
+    ],
+    "strategies": [
+      "agentic"
+    ],
+    "benchmark_dataset": "categorized_data/benchmark_dataset_v2.json",
+    "checkpoints": [
+      "open_plus_1",
+      "pct_25",
+      "pct_50",
+      "pct_75",
+      "close_minus_1"
+    ],
+    "categories": null,
+    "max_iterations": 100,
+    "max_search_results": 5,
+    "parallelism": 50,
+    "tools_enabled": true,
+    "n_samples": 750
+  },
+  "metrics": [
+    {
+      "model_id": "kimi-k2.5",
+      "strategy": "agentic",
+      "checkpoint": null,
+      "n_samples": 750,
+      "brier_score": 0.18770786666666667,
+      "brier_skill_score": -0.21376447360480055,
+      "ece": 0.12462666666666668,
+      "mce": 0.3715384615384616,
+      "accuracy": 0.72,
+      "precision": 0.4793388429752066,
+      "recall": 0.58,
+      "f1": 0.5248868778280543,
+      "parse_success_rate": 0.9853333333333333,
+      "by_temporal": {}
+    },
+    {
+      "model_id": "kimi-k2.5",
+      "strategy": "agentic",
+      "checkpoint": "open_plus_1",
+      "n_samples": 150,
+      "brier_score": 0.21117266666666668,
+      "brier_skill_score": 0.11803391888091641,
+      "ece": 0.16606666666666667,
+      "mce": 0.46166666666666656,
+      "accuracy": 0.6933333333333334,
+      "precision": 0.4423076923076923,
+      "recall": 0.575,
+      "f1": 0.5,
+      "parse_success_rate": 0.9866666666666667,
+      "by_temporal": {}
+    },
+    {
+      "model_id": "kimi-k2.5",
+      "strategy": "agentic",
+      "checkpoint": "pct_25",
+      "n_samples": 150,
+      "brier_score": 0.18843466666666667,
+      "brier_skill_score": -0.021525428629253884,
+      "ece": 0.14266666666666666,
+      "mce": 0.4866666666666667,
+      "accuracy": 0.7333333333333333,
+      "precision": 0.5,
+      "recall": 0.6,
+      "f1": 0.5454545454545454,
+      "parse_success_rate": 1.0,
+      "by_temporal": {}
+    },
+    {
+      "model_id": "kimi-k2.5",
+      "strategy": "agentic",
+      "checkpoint": "pct_50",
+      "n_samples": 150,
+      "brier_score": 0.19713333333333333,
+      "brier_skill_score": -0.3114245165868368,
+      "ece": 0.1489333333333333,
+      "mce": 0.38916666666666666,
+      "accuracy": 0.7,
+      "precision": 0.4528301886792453,
+      "recall": 0.6,
+      "f1": 0.5161290322580645,
+      "parse_success_rate": 0.98,
+      "by_temporal": {}
+    },
+    {
+      "model_id": "kimi-k2.5",
+      "strategy": "agentic",
+      "checkpoint": "pct_75",
+      "n_samples": 150,
+      "brier_score": 0.194414,
+      "brier_skill_score": -0.5790696289237001,
+      "ece": 0.12433333333333335,
+      "mce": 0.60125,
+      "accuracy": 0.6933333333333334,
+      "precision": 0.43478260869565216,
+      "recall": 0.5,
+      "f1": 0.46511627906976744,
+      "parse_success_rate": 0.9866666666666667,
+      "by_temporal": {}
+    },
+    {
+      "model_id": "kimi-k2.5",
+      "strategy": "agentic",
+      "checkpoint": "close_minus_1",
+      "n_samples": 150,
+      "brier_score": 0.14738466666666666,
+      "brier_skill_score": -0.941588210496733,
+      "ece": 0.13673333333333335,
+      "mce": 0.4100000000000001,
+      "accuracy": 0.78,
+      "precision": 0.5813953488372093,
+      "recall": 0.625,
+      "f1": 0.6024096385542168,
+      "parse_success_rate": 0.9733333333333334,
+      "by_temporal": {}
+    }
+  ]
+}

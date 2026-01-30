@@ -1,0 +1,130 @@
+{
+  "run_id": "run_20260129_130821_6a50_gemini-3-pro_no_tools_after_fix",
+  "started_at": "2026-01-29T13:08:21.527108",
+  "completed_at": "2026-01-29T13:26:45.614190",
+  "status": "completed",
+  "total_predictions": 750,
+  "parse_success_rate": 1.0,
+  "beats_market_rate": 0.39466666666666667,
+  "tie_rate": 0.032,
+  "config": {
+    "model_ids": [
+      "gemini-3-pro"
+    ],
+    "strategies": [
+      "agentic"
+    ],
+    "benchmark_dataset": "categorized_data/benchmark_dataset_v2.json",
+    "checkpoints": [
+      "open_plus_1",
+      "pct_25",
+      "pct_50",
+      "pct_75",
+      "close_minus_1"
+    ],
+    "categories": null,
+    "max_iterations": 100,
+    "max_search_results": 5,
+    "parallelism": 50,
+    "tools_enabled": false,
+    "n_samples": 750
+  },
+  "metrics": [
+    {
+      "model_id": "gemini-3-pro",
+      "strategy": "agentic",
+      "checkpoint": null,
+      "n_samples": 750,
+      "brier_score": 0.2530516,
+      "brier_skill_score": -0.6362928604067697,
+      "ece": 0.18644,
+      "mce": 0.5904999999999999,
+      "accuracy": 0.6453333333333333,
+      "precision": 0.27702702702702703,
+      "recall": 0.205,
+      "f1": 0.23563218390804594,
+      "parse_success_rate": 1.0,
+      "by_temporal": {}
+    },
+    {
+      "model_id": "gemini-3-pro",
+      "strategy": "agentic",
+      "checkpoint": "open_plus_1",
+      "n_samples": 150,
+      "brier_score": 0.24046199999999998,
+      "brier_skill_score": -0.004293458740195488,
+      "ece": 0.16286666666666663,
+      "mce": 0.835,
+      "accuracy": 0.66,
+      "precision": 0.3103448275862069,
+      "recall": 0.225,
+      "f1": 0.2608695652173913,
+      "parse_success_rate": 1.0,
+      "by_temporal": {}
+    },
+    {
+      "model_id": "gemini-3-pro",
+      "strategy": "agentic",
+      "checkpoint": "pct_25",
+      "n_samples": 150,
+      "brier_score": 0.27090866666666663,
+      "brier_skill_score": -0.46862621794315773,
+      "ece": 0.23113333333333336,
+      "mce": 0.6400000000000001,
+      "accuracy": 0.6133333333333333,
+      "precision": 0.21875,
+      "recall": 0.175,
+      "f1": 0.19444444444444442,
+      "parse_success_rate": 1.0,
+      "by_temporal": {}
+    },
+    {
+      "model_id": "gemini-3-pro",
+      "strategy": "agentic",
+      "checkpoint": "pct_50",
+      "n_samples": 150,
+      "brier_score": 0.24329266666666663,
+      "brier_skill_score": -0.6184983147064038,
+      "ece": 0.1866,
+      "mce": 0.62,
+      "accuracy": 0.6666666666666666,
+      "precision": 0.3076923076923077,
+      "recall": 0.2,
+      "f1": 0.24242424242424246,
+      "parse_success_rate": 1.0,
+      "by_temporal": {}
+    },
+    {
+      "model_id": "gemini-3-pro",
+      "strategy": "agentic",
+      "checkpoint": "pct_75",
+      "n_samples": 150,
+      "brier_score": 0.25048133333333333,
+      "brier_skill_score": -1.0344597923965368,
+      "ece": 0.21359999999999998,
+      "mce": 0.5853846153846153,
+      "accuracy": 0.64,
+      "precision": 0.26666666666666666,
+      "recall": 0.2,
+      "f1": 0.2285714285714286,
+      "parse_success_rate": 1.0,
+      "by_temporal": {}
+    },
+    {
+      "model_id": "gemini-3-pro",
+      "strategy": "agentic",
+      "checkpoint": "close_minus_1",
+      "n_samples": 150,
+      "brier_score": 0.26011333333333336,
+      "brier_skill_score": -2.426631771235861,
+      "ece": 0.21639999999999998,
+      "mce": 0.8425,
+      "accuracy": 0.6466666666666666,
+      "precision": 0.2903225806451613,
+      "recall": 0.225,
+      "f1": 0.2535211267605634,
+      "parse_success_rate": 1.0,
+      "by_temporal": {}
+    }
+  ]
+}
