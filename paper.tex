@@ -1,15 +1,19 @@
 \documentclass{article}
-\usepackage{iclr2026_conference,times}
+\usepackage{iclr2026_conference}
+\usepackage{newtxtext,newtxmath}
 
 \usepackage{hyperref}
 \usepackage{url}
 \usepackage{amsmath}
-\usepackage{amssymb}
 \usepackage{graphicx}
 \usepackage{booktabs}
 \usepackage{placeins}
+\usepackage{xcolor}
+\usepackage{colortbl}
 
-\title{When Do LLM Forecasters Beat Prediction Markets? \\ Evidence from 15,000 Probabilistic Forecasts on CFTC-Regulated Markets}
+\setlength{\emergencystretch}{3em}
+
+\title{Epistemic Dynamics of AI Agents in Prediction Markets}
 
 \author{Anonymous Authors}
 
@@ -18,26 +22,38 @@
 \maketitle
 
 \begin{abstract}
-We present HADC-Bench, evaluating when LLMs beat prediction markets. Across 10 models and 150 CFTC-regulated markets, we generate 15,000 predictions at five temporal checkpoints. Key findings: \textbf{(1) Temporal degradation is universal}—models beat markets early (Claude +0.167 BSS at Open+1) but fail late (all BSS $<$ -0.7 at Close-1) as continuous market aggregation overwhelms periodic updates. \textbf{(2) Web search is critical}—improves BSS by 0.1-0.6 points. \textbf{(3) Contrarian edge}—Claude achieves 69.2\% accuracy when strongly disagreeing at mid-lifecycle. \textbf{(4) Domain specialists}—Claude dominates sports (+0.294) and macro (+0.163); all fail politics and finance. These findings motivate temporal-domain task routing.
+We present HADC-Bench, a benchmark for evaluating \emph{when} agentic LLM forecasters---autonomous systems that search the web and reason over evidence---are reliable enough to trust over prediction markets. Across 10 frontier models and 150 CFTC-regulated binary markets, we generate 15,000 probabilistic forecasts at five temporal checkpoints under two conditions (with and without web search). Key findings: \textbf{(1)} Models beat markets early (Claude $+0.167$ BSS at Open+1) but fail late (all BSS $< -0.7$ at Close-1), explained by an information-sparse$\to$dense regime transition. \textbf{(2)} Web search improves pooled BSS by 0.14--0.59 points across all models, but \emph{degrades} performance in 12\% of model-checkpoint conditions---search is a double-edged sword requiring tool-access policies. \textbf{(3)} Seven of ten models add genuine independent signal on high-uncertainty markets (positive BSS on toss-ups), but all hurt on easy markets---a monotonic difficulty gradient that yields directly deployable rules. \textbf{(4)} Two-model ensembles reduce error relative to individual models, with the best pair cutting pooled BSS loss by 40\%. These findings provide empirically grounded guidelines for responsible deployment of agentic financial AI and set the stage for post-training trading agents/bots via reinforcement learning on verifiable, market-resolved rewards.
 \end{abstract}
 
+%==============================================================================
 \section{Introduction}
+%==============================================================================
 
-\subsection{Motivation}
+When should an autonomous AI agent's forecast be trusted over a prediction market? This question is central to the responsible deployment of agentic systems in finance \citep{durante2024agentfinance}. Existing forecasting benchmarks evaluate LLMs on mostly static question sets \citep{kalshi_bench_2024, karger2024forecastbench, ye2024mirai}, making temporal dynamics invisible---yet financial markets aggregate information \emph{continuously}, with early prices reflecting sparse trader activity and late prices incorporating near-complete information from thousands of participants. An agent that beats markets early but fails late requires a fundamentally different deployment strategy than one that fails uniformly.
 
-When should we trust an LLM's prediction over a prediction market? Existing benchmarks use static question sets, making temporal dynamics invisible—yet markets aggregate information continuously, with early prices reflecting sparse information and late prices incorporating near-complete information. We address this gap: \textbf{Under what temporal conditions do LLM forecasters beat prediction markets?}
+We address this gap with \textbf{HADC-Bench}, evaluating 10 frontier models as agentic forecasters on 150 CFTC-regulated binary markets from Kalshi. All markets feature verified outcomes, real capital at risk (\$5k+ volume), and post-training resolution. We sample at 5 lifecycle checkpoints and evaluate each model with and without web search, generating 15,000 predictions.
 
-\subsection{Our Approach and Key Findings}
+Our contributions: \textbf{(1)} A controlled tool-access experiment isolating when web search helps vs.\ \emph{hurts} calibration---including a search-quantity Goldilocks zone. \textbf{(2)} An information regime framework explaining \emph{why} temporal degradation occurs. \textbf{(3)} A market-difficulty analysis showing models provide genuinely independent signal on high-uncertainty markets, with contrarian accuracy of 80.9\% on toss-ups. \textbf{(4)} Ensemble construction from complementary error profiles. Together, these yield actionable guidelines for when to trust, override, or ensemble agentic financial AI systems.
 
-We evaluate 10 frontier models as \textbf{agentic forecasters} on 150 CFTC-regulated binary markets from Kalshi. All markets feature verified outcomes, real capital at risk (\$5k+ volume), and post-training resolution (events after model training cutoffs). We sample at 5 lifecycle checkpoints—Open+1 (1\%), 25\%, 50\%, 75\%, Close-1 (99\%)—generating 15,000 predictions.
+%==============================================================================
+\section{Related Work}
+%==============================================================================
 
-Our evaluation reveals: \textbf{(1)} Four models beat markets early (Claude +0.167, Kimi-k2.5 +0.118, GPT +0.085, Kimi-k2 +0.011 BSS at Open+1), but all fail late (BSS $< -0.7$ at Close-1)—continuous market aggregation overwhelms periodic model updates. \textbf{(2)} Web search is critical: without it, BSS drops 0.1-0.6 points. \textbf{(3)} Domain specialists emerge: Claude dominates sports (+0.294) and macro (+0.163); all models fail politics and finance. \textbf{(4)} When Claude strongly disagrees with markets at 25\%, it achieves 69.2\% accuracy. These results motivate temporal-domain task routing.
+\textbf{LLM forecasting and live prediction benchmarks.} KalshiBench \citep{kalshi_bench_2024} evaluates LLMs on thousands of Kalshi markets and highlights miscalibration. ForecastBench \citep{karger2024forecastbench} and Prophet Arena \citep{yang2025prophet} move toward dynamic evaluation on live markets, while event-focused setups such as Mirai \citep{ye2024mirai} further emphasize time sensitivity. Adjacent lines of work study forecasting-specific reliability mechanisms such as consistency checks \citep{paleka2024consistency} and uncertainty-aware training objectives \citep{damani2025binaryrewards}. 
 
+\textbf{Agentic AI for trading and financial decision making.} Beyond forecasting-only tasks, benchmarks increasingly measure end-to-end agent performance in market interaction and decision making, including multi-market trading \citep{qian2025whenagentstrade, yu2025livetradebench} and financial decision-making agents \citep{li2025investorbench}. These complement prediction-market studies by stressing execution, feedback loops, and reward design.
+
+\textbf{Prediction markets and crowd forecasting systems.} The efficient market hypothesis \citep{fama1970efficient} motivates market prices as strong baselines. Prediction markets are generally well-calibrated in many domains \citep{wolfers2004prediction, arrow2008promise}, and crowd forecasting systems span markets, polls, and elite forecasters \citep{atanasov2022crowd}. We focus on \'when-to-trust\' under a temporally varying information environment.
+
+\textbf{Tool use and temporal drift.} Tool access can improve task performance \citep{schick2023toolformer}, but tool-augmented workflows can distort confidence \citep{xuan2026confidence} and deeper reasoning can degrade calibration \citep{huang2025dont_think_twice, lacombe2025dontthinktwice}. Broader concerns about temporal drift in LLM behavior motivate evaluation protocols that are explicitly time-aware \citep{khairnar2025temporaldrift, zhang2025llmeval3}. Our temporal checkpoint design directly tests these stability and reliability issues in a high-stakes forecasting setting.
+
+%==============================================================================
 \section{Method}
+%==============================================================================
 
 \subsection{Dataset: CFTC-Regulated Binary Markets}
 
-We collect 150 binary markets from Kalshi, a CFTC-regulated exchange. Each market resolves to YES/NO based on objective criteria (election results, economic releases, sports scores). We enforce \$5,000+ trading volume per market and require post-October 2025 resolution to ensure temporal separation from model training cutoffs. The dataset spans five categories (30 markets each): Politics, Sports, Macro-Economics, Science/Tech, and Financial markets. Table~\ref{tab:dataset_characteristics} provides statistics.
+We collect 150 binary markets from Kalshi, a CFTC-regulated exchange where real capital is at risk. Each market resolves to YES/NO based on objective criteria (election results, economic releases, sports scores). We enforce \$5,000+ trading volume per market and require post-October 2025 resolution to ensure temporal separation from model training cutoffs. The dataset spans five categories (30 markets each): Politics, Sports, Macro-Economics, Science/Tech, and Financial markets. Table~\ref{tab:dataset_characteristics} provides statistics.
 
 \begin{table}[t]
 \centering
@@ -48,12 +64,12 @@ We collect 150 binary markets from Kalshi, a CFTC-regulated exchange. Each marke
 \toprule
 \textbf{Characteristic} & \textbf{Value} \\
 \midrule
-Markets / Checkpoints / Predictions & 150 / 5 / 750 \\
+Markets / Checkpoints / Predictions & 150 / 5 / 750 per condition \\
 Categories & 5 (30 markets each) \\
 Timeline & Jan 2025 -- Jan 2026 \\
 \midrule
-Trading volume & \$5.6k -- \$41.3M (med. \$35k) \\
-Duration (days) & 2 -- 337 (med. 89) \\
+Trading volume & \$5.6k -- \$41.3M (med.\ \$35k) \\
+Duration (days) & 2 -- 337 (med.\ 89) \\
 Outcomes & 73\% NO, 27\% YES \\
 \bottomrule
 \end{tabular}
@@ -61,46 +77,47 @@ Outcomes & 73\% NO, 27\% YES \\
 
 \subsection{Temporal Sampling Protocol}
 
-For each market, we define lifecycle progress $p(t) = \frac{t - t_{\text{open}}}{t_{\text{close}} - t_{\text{open}}}$ and sample at 5 checkpoints: Open+1 ($p{=}0.01$), 25\%, 50\%, 75\%, and Close-1 ($p{=}0.99$). This percentage-based approach ensures comparable positions across heterogeneous durations. For each sample, we record sample date, market price, and ground truth outcome, yielding 750 samples per condition (1,500 per model, 15,000 total).
+For each market, we define lifecycle progress $p(t) = \frac{t - t_{\text{open}}}{t_{\text{close}} - t_{\text{open}}}$ and sample at 5 checkpoints: Open+1 ($p{=}0.01$), 25\%, 50\%, 75\%, and Close-1 ($p{=}0.99$). For each sample, we record sample date, market price, and ground truth outcome, yielding 750 samples per model per condition (with/without search), totaling 15,000 predictions.
 
 \subsection{Agentic Forecasting Architecture}
 
-We implement agentic forecasters using LangGraph with a 4-node workflow: research (initialize context), agent (decide to search or predict), tools (execute searches), and forecast (extract structured output). The agent can invoke web search multiple times before forecasting.
+We implement agentic forecasters using LangGraph with a 4-node state machine: \textsc{research} (initialize context) $\to$ \textsc{agent} (decide to search or predict) $\to$ \textsc{tools} (execute searches) $\to$ \textsc{forecast} (extract structured prediction). The agent loops between \textsc{agent} and \textsc{tools} until it produces a final forecast.
 
-All models receive identical system prompts instructing calibrated probabilistic forecasting. When web search is enabled, agents access a search tool backed by SerpAPI with date filtering (\texttt{cd\_max: sample\_date}) to prevent future data leakage. Models use temperatures 0.7-1.0 depending on provider constraints. Market prices are hidden during prediction to prevent anchoring—we compare model predictions to market prices retrospectively.
+When web search is enabled (\textbf{agentic condition}), agents access SerpAPI with date filtering (\texttt{cd\_max=sample\_date}) to prevent future information leakage. When disabled (\textbf{baseline condition}), the model receives the identical prompt but cannot invoke any tools, isolating parametric knowledge. Market prices are withheld during prediction to prevent anchoring.
 
 \subsection{Models Evaluated}
 
-We evaluate 10 frontier LLMs: Claude Opus 4.5, GPT-5.2-xhigh, Gemini 3 Pro, Grok 4.1-fast, Kimi-k2, Kimi-k2.5, DeepSeek v3.2, Intellect-3, Trinity Large, and Qwen3-235B. All models were released October 2025 or later and represent decoder-only transformers ranging from 70B to 600B+ parameters. Each model generates 750 predictions per tool condition (with/without web search), totaling 15,000 predictions.
+We evaluate 10 frontier LLMs released October 2025 or later: Claude Opus 4.5, GPT-5.2-xhigh, Gemini 3 Pro, Grok 4.1-fast, Kimi-k2, Kimi-k2.5, DeepSeek v3.2, Intellect-3, Trinity Large, and Qwen3-235B. Each generates 750 predictions per condition, totaling 15,000 predictions.
 
 \subsection{Evaluation Metrics}
 
 \textbf{Brier Score (BS):} $\text{BS} = \frac{1}{N}\sum_{i=1}^{N}(p_i - y_i)^2$, where $p_i$ is predicted probability and $y_i \in \{0, 1\}$.
 
-\textbf{Brier Skill Score (BSS):} $\text{BSS} = 1 - \frac{\text{BS}_{\text{model}}}{\text{BS}_{\text{market}}}$, where $\text{BS}_{\text{market}}$ uses market price at prediction time. Positive BSS indicates beating markets.
+\textbf{Brier Skill Score (BSS):} $\text{BSS} = 1 - \frac{\text{BS}_{\text{model}}}{\text{BS}_{\text{market}}}$, using market price at prediction time as baseline. Positive BSS indicates beating markets.
 
-We also report Expected Calibration Error (ECE) and accuracy for reference.
-
+%==============================================================================
 \section{Results}
+%==============================================================================
 
-Tables~\ref{tab:performance_agentic} and~\ref{tab:performance_baseline} present BSS for all models with and without web search.
+\subsection{Temporal Degradation and Information Regimes}
 
-% Table: Model Performance (WITH WEB SEARCH)
+Table~\ref{tab:performance_agentic} presents BSS for all models with web search. Four models beat markets at Open+1 (Claude $+0.167$, Kimi-k2.5 $+0.118$, GPT $+0.085$, Kimi-k2 $+0.011$), but all fail by Close-1 (BSS $< -0.7$). The degradation is monotonic across 9 of 10 models (Kimi-k2 shows a slight recovery at Close-1).
+
 \begin{table*}[t]
 \centering
-\caption{Brier Skill Score (BSS) across 5 temporal checkpoints \textbf{with web search}. Positive BSS indicates beating market baseline.}
+\caption{BSS across temporal checkpoints \textbf{with web search}. \textbf{Bold} = beating market (BSS $> 0$).}
 \label{tab:performance_agentic}
 \small
 \begin{tabular}{lrrrrrr}
 \toprule
-\textbf{Model} & \textbf{Open+1} & \textbf{25\%} & \textbf{50\%} & \textbf{75\%} & \textbf{Close-1} & \textbf{Average} \\
+\textbf{Model} & \textbf{Open+1} & \textbf{25\%} & \textbf{50\%} & \textbf{75\%} & \textbf{Close-1} & \textbf{Pooled} \\
 \midrule
-Claude Opus 4.5 & \textbf{+0.167} & \textbf{+0.059} & -0.136 & -0.165 & -0.829 & -0.069 \\
+Claude Opus 4.5 & \textbf{+0.167} & \textbf{+0.059} & -0.136 & -0.165 & -0.829 & -0.068 \\
 GPT-5.2-xhigh & \textbf{+0.085} & -0.095 & -0.344 & -0.595 & -0.960 & -0.252 \\
 Gemini 3 Pro & -0.084 & -0.250 & -0.373 & -0.510 & -0.734 & -0.312 \\
 Grok 4.1-fast & -0.003 & -0.071 & -0.314 & -0.621 & -0.909 & -0.267 \\
-Kimi-k2 & \textbf{+0.011} & -0.113 & -0.601 & -0.912 & -0.823 & -0.367 \\
 Kimi-k2.5 & \textbf{+0.118} & -0.022 & -0.311 & -0.579 & -0.942 & -0.214 \\
+Kimi-k2 & \textbf{+0.011} & -0.113 & -0.601 & -0.912 & -0.823 & -0.367 \\
 DeepSeek v3.2 & -0.064 & -0.424 & -0.690 & -0.870 & -1.158 & -0.507 \\
 Intellect-3 & -0.057 & -0.433 & -0.641 & -0.698 & -1.736 & -0.527 \\
 Trinity Large & -0.128 & -0.275 & -0.581 & -0.684 & -1.716 & -0.496 \\
@@ -109,186 +126,188 @@ Qwen3-235B & -0.132 & -0.401 & -0.955 & -1.018 & -1.334 & -0.615 \\
 \end{tabular}
 \end{table*}
 
-% Table: Model Performance (NO WEB SEARCH)
+We explain this through two \textbf{information regimes}. In the \textbf{information-sparse regime} (Open+1, 25\%), market prices reflect few trades from early participants. An LLM with web search can find publicly available information---news articles, historical precedents, expert analysis---not yet priced into the thin market. In the \textbf{information-dense regime} (75\%, Close-1), markets have aggregated thousands of trades from diverse participants with access to real-time data, private polling, and social signals beyond what web search can surface. The market becomes a strong crowd forecasting baseline \citep{atanasov2022crowd}; periodic web search cannot match continuous information aggregation \citep{fama1970efficient}. The crossover occurs between 25--50\% for top models (Claude, GPT) and before Open+1 for weaker models.
+
+\subsection{Web Search: A Double-Edged Sword}
+
+Web search improves pooled BSS by 0.14--0.59 points across all models. However, computing $\Delta\text{BSS} = \text{BSS}_{\text{agentic}} - \text{BSS}_{\text{baseline}}$ for every model-checkpoint pair (Table~\ref{tab:delta_bss}) reveals that \textbf{6 of 50 conditions show negative $\Delta$BSS}---search \emph{hurt}. GPT-5.2 at Open+1 drops from BSS $+0.125$ (baseline) to $+0.085$ (agentic): its parametric knowledge produced better predictions than parametric knowledge plus noisy early search results. Kimi-k2 is harmed at three checkpoints (Open+1, 50\%, 75\%).
+
 \begin{table*}[t]
 \centering
-\caption{Brier Skill Score (BSS) for all 10 models across 5 temporal checkpoints \textbf{without web search} (baseline, parametric knowledge only). Performance is substantially worse without external information access.}
-\label{tab:performance_baseline}
+\caption{$\Delta$BSS (agentic minus baseline). \textbf{Bold} = search helped. \colorbox{red!15}{Red} = search \emph{hurt}---model was better without tools.}
+\label{tab:delta_bss}
 \small
 \begin{tabular}{lrrrrrr}
 \toprule
-\textbf{Model} & \textbf{Open+1} & \textbf{25\%} & \textbf{50\%} & \textbf{75\%} & \textbf{Close-1} & \textbf{Average} \\
+\textbf{Model} & \textbf{Open+1} & \textbf{25\%} & \textbf{50\%} & \textbf{75\%} & \textbf{Close-1} & \textbf{Pooled} \\
 \midrule
-Claude Opus 4.5 & -0.023 & -0.319 & -0.676 & -0.981 & -2.212 & -0.588 \\
-GPT-5.2-xhigh & \textbf{+0.125} & -0.202 & -0.474 & -0.682 & -1.853 & -0.392 \\
-Gemini 3 Pro & -0.004 & -0.469 & -0.618 & -1.034 & -2.427 & -0.636 \\
-Grok 4.1-fast & -0.217 & -0.528 & -1.036 & -1.300 & -2.619 & -0.859 \\
-Kimi-k2 & \textbf{+0.036} & -0.347 & -0.466 & -0.766 & -2.211 & -0.501 \\
-Kimi-k2.5 & \textbf{+0.008} & -0.202 & -0.483 & -0.774 & -1.719 & -0.432 \\
-DeepSeek v3.2 & -0.116 & -0.514 & -0.787 & -1.064 & -2.202 & -0.697 \\
-Intellect-3 & -0.192 & -0.385 & -0.748 & -1.361 & -2.465 & -0.755 \\
-Trinity Large & -0.129 & -0.423 & -0.970 & -0.989 & -2.532 & -0.735 \\
-Qwen3-235B & -0.168 & -0.681 & -1.018 & -1.119 & -2.750 & -0.861 \\
+Claude Opus 4.5 & \textbf{+0.189} & \textbf{+0.378} & \textbf{+0.540} & \textbf{+0.816} & \textbf{+1.383} & \textbf{+0.520} \\
+GPT-5.2-xhigh & \cellcolor{red!15}$-0.040$ & \textbf{+0.108} & \textbf{+0.130} & \textbf{+0.087} & \textbf{+0.893} & \textbf{+0.140} \\
+Gemini 3 Pro & \cellcolor{red!15}$-0.080$ & \textbf{+0.218} & \textbf{+0.246} & \textbf{+0.525} & \textbf{+1.693} & \textbf{+0.325} \\
+Grok 4.1-fast & \textbf{+0.214} & \textbf{+0.457} & \textbf{+0.721} & \textbf{+0.679} & \textbf{+1.710} & \textbf{+0.592} \\
+Kimi-k2 & \cellcolor{red!15}$-0.025$ & \textbf{+0.234} & \cellcolor{red!15}$-0.135$ & \cellcolor{red!15}$-0.146$ & \textbf{+1.388} & \textbf{+0.135} \\
+Kimi-k2.5 & \textbf{+0.110} & \textbf{+0.180} & \textbf{+0.172} & \textbf{+0.195} & \textbf{+0.777} & \textbf{+0.218} \\
+DeepSeek v3.2 & \textbf{+0.053} & \textbf{+0.090} & \textbf{+0.097} & \textbf{+0.193} & \textbf{+1.044} & \textbf{+0.190} \\
+Intellect-3 & \textbf{+0.135} & \cellcolor{red!15}$-0.049$ & \textbf{+0.107} & \textbf{+0.662} & \textbf{+0.729} & \textbf{+0.228} \\
+Trinity Large & \textbf{+0.000} & \textbf{+0.148} & \textbf{+0.389} & \textbf{+0.304} & \textbf{+0.816} & \textbf{+0.240} \\
+Qwen3-235B & \textbf{+0.037} & \textbf{+0.280} & \textbf{+0.063} & \textbf{+0.101} & \textbf{+1.416} & \textbf{+0.245} \\
 \bottomrule
 \end{tabular}
 \end{table*}
 
-\subsection{Web Search is Critical}
-
-Web search improves average BSS by 0.1-0.6 points across all models: Claude gains +0.519 (-0.588 to -0.069), Grok +0.592, Gemini +0.324, GPT +0.140. Without search, Claude's Close-1 BSS drops to -2.212—parametric knowledge alone is insufficient.
-
-\subsection{Temporal Degradation is Universal}
-
-Four models beat markets at Open+1 (Claude +0.167, Kimi-k2.5 +0.118, GPT +0.085, Kimi-k2 +0.011), but all fail by Close-1 (BSS $< -0.7$). The pattern is monotonic: degradation ranges from -0.65 (Gemini) to -1.68 (Intellect-3). Average BSS stratifies into tiers: Tier 1 (Claude -0.069, Kimi-k2.5 -0.214, GPT -0.252, Grok -0.267), Tier 2 (Gemini -0.312, Kimi-k2 -0.367), Tier 3 (DeepSeek -0.507, Intellect -0.527, Qwen3 -0.615). This demonstrates LLMs with periodic web search cannot track continuous market information aggregation.
-
-\subsection{Search Behavior and Confidence}
-
-Table~\ref{tab:search_counts} shows search counts per prediction. Claude searches aggressively (12-13), Kimi-k2.5 minimally (3-4). Search quantity does not correlate with performance—search quality matters more.
-
-\begin{table*}[t]
-\centering
-\caption{Average web searches per prediction across temporal checkpoints.}
-\label{tab:search_counts}
-\small
-\begin{tabular}{lrrrrr}
-\toprule
-\textbf{Model} & \textbf{Open+1} & \textbf{25\%} & \textbf{50\%} & \textbf{75\%} & \textbf{Close-1} \\
-\midrule
-Claude Opus 4.5 & 12.7 & 13.4 & 12.5 & 13.0 & 10.2 \\
-GPT-5.2-xhigh & 6.8 & 8.0 & 9.9 & 7.1 & 9.4 \\
-Gemini 3 Pro & 6.3 & 6.6 & 6.5 & 6.6 & 5.4 \\
-Grok 4.1-fast & 10.4 & 10.4 & 10.1 & 10.0 & 8.4 \\
-Kimi-k2 & 5.0 & 5.1 & 5.0 & 5.0 & 4.5 \\
-Kimi-k2.5 & 3.5 & 3.6 & 3.5 & 3.8 & 3.2 \\
-DeepSeek v3.2 & 6.0 & 5.8 & 6.1 & 5.9 & 6.2 \\
-Intellect-3 & 1.9 & 1.9 & 1.8 & 1.7 & 1.6 \\
-Trinity Large & 7.5 & 5.7 & 6.0 & 5.8 & 5.1 \\
-Qwen3-235B & 2.5 & 1.6 & 2.4 & 1.3 & 1.2 \\
-\bottomrule
-\end{tabular}
-\end{table*}
-
-Confidence patterns reveal miscalibration: DeepSeek and Qwen3 show highest confidence (45-47\%) but worst BSS, while Claude's moderate confidence (38-42\%) yields best BSS. Overconfident incorrect predictions accumulate large Brier penalties.
-
-\subsection{Belief Updates and Contrarian Accuracy}
-
-Table~\ref{tab:belief_updates} shows belief dynamics: six models converge toward markets (Grok -0.052, Gemini -0.050), while four diverge. High-search models converge; low-search models diverge, suggesting extensive search corrects biases.
+This is consistent with recent findings that deeper reasoning can hurt calibration \citep{huang2025dont_think_twice} and that web search specifically induces overconfidence in tool-use agents \citep{xuan2026confidence}: \emph{more information processing is not uniformly beneficial}. Further analysis reveals a \textbf{search quantity Goldilocks zone} for Claude (Table~\ref{tab:search_goldilocks}): peak BSS at 4--7 queries ($+0.109$), with fewer searches yielding BSS $= -0.811$ (insufficient information) and 13+ searches degrading to $-0.115$ (chasing noise).
 
 \begin{table}[t]
 \centering
-\caption{Belief update dynamics. $\Delta$ Change: negative = converging toward market.}
-\label{tab:belief_updates}
+\caption{Search quantity vs.\ BSS (Claude). Only 4--7 queries yields positive BSS.}
+\label{tab:search_goldilocks}
 \small
 \begin{tabular}{lrr}
 \toprule
-\textbf{Model} & \textbf{$\Delta$ Change} & \textbf{Avg Searches} \\
+\textbf{Searches} & $n$ & \textbf{BSS} \\
 \midrule
-Claude Opus 4.5 & -0.006 & 12.4 \\
-GPT-5.2-xhigh & +0.009 & 8.3 \\
-Gemini 3 Pro & -0.050 & 6.3 \\
-Grok 4.1-fast & -0.052 & 9.9 \\
-Kimi-k2 & -0.041 & 4.9 \\
-Kimi-k2.5 & +0.035 & 3.5 \\
-DeepSeek v3.2 & -0.008 & 6.0 \\
-Intellect-3 & +0.028 & 1.8 \\
-Trinity Large & -0.024 & 6.0 \\
-Qwen3-235B & +0.010 & 1.8 \\
+1--3 & 48 & $-0.811$ \\
+4--7 & 152 & $\mathbf{+0.109}$ \\
+8--12 & 238 & $+0.007$ \\
+13+ & 312 & $-0.115$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Table~\ref{tab:contrarian_accuracy} shows accuracy when models strongly disagree ($>$30\% divergence). Claude achieves 69.2\% at 25\% and 64.4\% at 50\%—finding information markets miss. By Close-1, contrarian predictions become unreliable (35-50\%).
+\textbf{Implication for responsible deployment.} Giving an autonomous financial agent unrestricted tool access is not safe by default. Agentic systems require \textbf{tool-access policies}---decision functions governing when to search versus rely on parametric knowledge, and how many iterations to permit before forcing a prediction.
+
+\subsection{LLMs Add Independent Signal on Hard Markets}
+
+Do LLMs and markets struggle on the same questions? We define \textbf{market difficulty} by market price distance from certainty: a market at 50\% represents maximum crowd uncertainty (toss-up), while one at 5\% or 95\% represents strong consensus (easy). Table~\ref{tab:difficulty} stratifies BSS by four difficulty tiers.
 
 \begin{table*}[t]
 \centering
-\caption{Contrarian accuracy (divergence $>$ 30\%). Bold indicates above-chance performance.}
-\label{tab:contrarian_accuracy}
+\caption{BSS stratified by market difficulty ($d = |p_m{-}0.5|$): Easy $d{>}0.4$, Medium $0.2{<}d{\leq}0.4$, Hard $0.1{<}d{\leq}0.2$, Toss-up $d{\leq}0.1$. \textbf{Bold} = beating market.}
+\label{tab:difficulty}
 \small
 \begin{tabular}{lrrrrr}
 \toprule
-\textbf{Model} & \textbf{Open+1} & \textbf{25\%} & \textbf{50\%} & \textbf{75\%} & \textbf{Close-1} \\
+\textbf{Model} & \textbf{Easy} & \textbf{Medium} & \textbf{Hard} & \textbf{Toss-up} & \textbf{Overall} \\
 \midrule
-Claude Opus 4.5 & 54.8\% (\textit{n=42}) & \textbf{69.2\%} (\textit{n=39}) & \textbf{64.4\%} (\textit{n=45}) & 59.6\% (\textit{n=47}) & 47.7\% (\textit{n=44}) \\
-GPT-5.2-xhigh & 56.4\% (\textit{n=39}) & 48.5\% (\textit{n=33}) & 47.4\% (\textit{n=38}) & 35.0\% (\textit{n=40}) & 46.3\% (\textit{n=41}) \\
-Gemini 3 Pro & 52.5\% (\textit{n=59}) & 48.8\% (\textit{n=41}) & 47.9\% (\textit{n=48}) & 46.7\% (\textit{n=45}) & 48.6\% (\textit{n=37}) \\
-Grok 4.1-fast & 56.1\% (\textit{n=41}) & 58.3\% (\textit{n=36}) & 41.2\% (\textit{n=34}) & 43.2\% (\textit{n=37}) & 40.0\% (\textit{n=30}) \\
-Kimi-k2 & 57.4\% (\textit{n=47}) & 57.8\% (\textit{n=45}) & 36.4\% (\textit{n=44}) & 35.3\% (\textit{n=51}) & 50.0\% (\textit{n=40}) \\
-Kimi-k2.5 & 52.6\% (\textit{n=38}) & 56.2\% (\textit{n=32}) & 40.0\% (\textit{n=45}) & 39.6\% (\textit{n=48}) & 48.0\% (\textit{n=50}) \\
-DeepSeek v3.2 & 38.9\% (\textit{n=54}) & 35.3\% (\textit{n=51}) & 35.1\% (\textit{n=57}) & 35.3\% (\textit{n=51}) & 35.6\% (\textit{n=45}) \\
-Intellect-3 & 48.2\% (\textit{n=56}) & 42.6\% (\textit{n=61}) & 33.3\% (\textit{n=51}) & 40.8\% (\textit{n=49}) & 32.7\% (\textit{n=49}) \\
-Trinity Large & 49.2\% (\textit{n=59}) & 50.0\% (\textit{n=62}) & 32.7\% (\textit{n=52}) & 38.2\% (\textit{n=55}) & 25.5\% (\textit{n=47}) \\
-Qwen3-235B & 49.0\% (\textit{n=49}) & 42.0\% (\textit{n=50}) & 27.1\% (\textit{n=59}) & 34.9\% (\textit{n=63}) & 38.8\% (\textit{n=49}) \\
+Claude Opus 4.5 & $-0.692$ & $-0.188$ & $\mathbf{+0.074}$ & $\mathbf{+0.301}$ & $-0.068$ \\
+GPT-5.2-xhigh & $-1.069$ & $-0.433$ & $-0.001$ & $\mathbf{+0.217}$ & $-0.252$ \\
+Gemini 3 Pro & $-0.829$ & $-0.365$ & $-0.346$ & $\mathbf{+0.047}$ & $-0.312$ \\
+Grok 4.1-fast & $-0.905$ & $-0.256$ & $-0.201$ & $\mathbf{+0.002}$ & $-0.267$ \\
+Kimi-k2.5 & $-1.125$ & $-0.316$ & $\mathbf{+0.077}$ & $\mathbf{+0.179}$ & $-0.214$ \\
+Kimi-k2 & $-0.906$ & $-0.555$ & $-0.296$ & $\mathbf{+0.098}$ & $-0.366$ \\
+DeepSeek v3.2 & $-1.308$ & $-0.669$ & $-0.413$ & $\mathbf{+0.041}$ & $-0.507$ \\
+Intellect-3 & $-1.680$ & $-0.625$ & $-0.108$ & $-0.109$ & $-0.527$ \\
+Trinity Large & $-1.235$ & $-0.688$ & $-0.260$ & $-0.041$ & $-0.496$ \\
+Qwen3-235B & $-1.502$ & $-0.857$ & $-0.238$ & $-0.123$ & $-0.615$ \\
+\midrule
+\multicolumn{6}{l}{\scriptsize{$n$ per tier: Easy: 254, Medium: 267, Hard: 100, Toss-up: 129}} \\
 \bottomrule
 \end{tabular}
 \end{table*}
 
-\subsection{Domain Specialists Emerge}
+Seven of ten models achieve positive BSS on toss-up markets, demonstrating genuine independent signal where crowd consensus is weakest. Claude leads at $+0.301$, followed by GPT ($+0.217$), Kimi-k2.5 ($+0.179$), and Kimi-k2 ($+0.098$). Three weaker models (Intellect-3, Trinity, Qwen3) show negative BSS even on toss-ups, suggesting a capability threshold for useful independent signal. The pattern inverts sharply for easy markets: all models show strongly negative BSS (ranging from $-0.692$ to $-1.680$), introducing substantial noise when overriding strong consensus. This monotonic difficulty gradient confirms that LLMs provide \emph{complementary} intelligence rather than merely echoing public signals, but only above a model capability threshold.
 
-Table~\ref{tab:category_performance} shows domain-specific performance. Claude dominates Sports (+0.294) and Macro (+0.163); GPT/Gemini show positive Macro BSS. All models fail Politics and Financial. This motivates domain routing: deploy Claude for sports/macro, defer to markets for politics/finance.
+Pearson correlation between model absolute error and market absolute error (Table~\ref{tab:error_corr}) reinforces this: all models show low-to-moderate correlation ($r = 0.19$--$0.41$), confirming that model errors are substantially independent from market errors. Intellect-3 shows the lowest correlation ($r = 0.193$) yet performs poorly on toss-ups, suggesting that independence alone is insufficient---accuracy matters too. Grok shows the highest ($r = 0.408$), most closely tracking market pricing patterns.
+
+\begin{table}[t]
+\centering
+\caption{Error correlation ($|\hat{p}{-}y|$ vs.\ $|p_m{-}y|$). Lower $r$ = more independent signal. All $p < 10^{-7}$.}
+\label{tab:error_corr}
+\small
+\begin{tabular}{lr}
+\toprule
+\textbf{Model} & \textbf{Pearson $r$} \\
+\midrule
+Intellect-3 & 0.193 \\
+Claude Opus 4.5 & 0.211 \\
+Trinity Large & 0.218 \\
+Kimi-k2.5 & 0.222 \\
+DeepSeek v3.2 & 0.256 \\
+Qwen3-235B & 0.261 \\
+Kimi-k2 & 0.291 \\
+GPT-5.2-xhigh & 0.336 \\
+Gemini 3 Pro & 0.340 \\
+Grok 4.1-fast & 0.408 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Contrarian value by difficulty.} When Claude strongly disagrees with markets ($|\hat{p} - p_m| > 0.20$, $n = 303$), the outcome depends critically on market difficulty: contrarian bets on toss-ups achieve \textbf{80.9\% win rate} (BSS $+0.476$, $n = 68$) and 65.4\% on hard markets (BSS $+0.166$, $n = 52$), but \emph{lose} on easy markets (19.8\% win rate, BSS $-0.720$, $n = 81$). The model's disagreement is a strong positive signal when the market is uncertain, but a negative signal when consensus is strong---a directly actionable deployment rule.
+
+\subsection{Domain Specialists and Ensemble Construction}
+
+Table~\ref{tab:category_performance} shows domain-specific performance across all 10 models. Claude dominates Sports ($+0.294$) and Macro ($+0.163$); Kimi-k2.5 also shows positive Sports BSS ($+0.124$), and GPT and Gemini show positive Macro BSS. All models fail Politics and Financial markets---domains where private information (insider polling, order flow) drives prices that web search cannot access.
 
 \begin{table*}[t]
 \centering
-\caption{BSS by category. Bold = beating markets.}
+\caption{BSS by category (agentic condition). \textbf{Bold} = beating markets.}
 \label{tab:category_performance}
 \small
 \begin{tabular}{lrrrrr}
 \toprule
 \textbf{Model} & \textbf{Politics} & \textbf{Sports} & \textbf{Macro} & \textbf{Sci/Tech} & \textbf{Financial} \\
 \midrule
-Claude Opus 4.5 & -0.379 & \textbf{+0.294} & \textbf{+0.163} & -0.154 & -0.609 \\
-GPT-5.2-xhigh & -0.484 & -0.088 & \textbf{+0.021} & -0.378 & -0.482 \\
-Gemini 3 Pro & -0.598 & -0.227 & \textbf{+0.033} & -0.575 & -0.217 \\
-Grok 4.1-fast & -0.427 & -0.197 & -0.182 & -0.190 & -0.426 \\
-Kimi-k2 & -0.421 & -0.342 & -0.023 & -0.369 & -0.788 \\
-Kimi-k2.5 & -0.596 & \textbf{+0.124} & -0.066 & -0.213 & -0.625 \\
-DeepSeek v3.2 & -0.703 & -0.110 & -0.333 & -0.596 & -1.182 \\
-Intellect-3 & -0.706 & -0.255 & -0.275 & -0.569 & -1.131 \\
-Trinity Large & -0.376 & -0.231 & -0.342 & -0.605 & -1.232 \\
-Qwen3-235B & -1.020 & -0.046 & -0.601 & -0.719 & -1.158 \\
+Claude Opus 4.5 & $-0.379$ & $\mathbf{+0.294}$ & $\mathbf{+0.163}$ & $-0.154$ & $-0.609$ \\
+GPT-5.2-xhigh & $-0.484$ & $-0.088$ & $\mathbf{+0.021}$ & $-0.378$ & $-0.482$ \\
+Gemini 3 Pro & $-0.598$ & $-0.227$ & $\mathbf{+0.033}$ & $-0.575$ & $-0.217$ \\
+Grok 4.1-fast & $-0.427$ & $-0.197$ & $-0.182$ & $-0.190$ & $-0.426$ \\
+Kimi-k2.5 & $-0.596$ & $\mathbf{+0.124}$ & $-0.066$ & $-0.213$ & $-0.625$ \\
+Kimi-k2 & $-0.421$ & $-0.342$ & $-0.023$ & $-0.369$ & $-0.788$ \\
+DeepSeek v3.2 & $-0.703$ & $-0.110$ & $-0.333$ & $-0.596$ & $-1.182$ \\
+Intellect-3 & $-0.706$ & $-0.255$ & $-0.275$ & $-0.569$ & $-1.131$ \\
+Trinity Large & $-0.376$ & $-0.231$ & $-0.342$ & $-0.605$ & $-1.232$ \\
+Qwen3-235B & $-1.020$ & $-0.046$ & $-0.601$ & $-0.719$ & $-1.158$ \\
 \bottomrule
 \end{tabular}
 \end{table*}
 
-\subsection{Convergence Speed}
+These complementary profiles motivate \textbf{ensemble construction} analogous to portfolio diversification \citep{markowitz1952portfolio}. A simple confidence average of Claude + Kimi-k2.5 achieves BSS $= -0.041$, reducing Claude's individual loss ($-0.068$) by 40\% and Kimi-k2.5's ($-0.214$) by 81\%. The ensemble beats markets at Open+1 ($+0.201$) and 25\% ($+0.101$) before degrading, extending the window of positive BSS relative to either individual model. While no pair achieves positive overall BSS---the late-stage information-dense regime dominates pooled scores---the ensemble's early-stage gains suggest value in temporal routing: deploy ensembles for early forecasts, defer to markets later.
 
-Table~\ref{tab:convergence_speed} shows how often models reach correct predictions before markets. Gemini/Grok converge fastest early (56.7\% at Open+1), but by Close-1 all models lag. Gemini/Grok converge faster but have worse BSS than Claude—directionally correct but poorly calibrated.
-
-\begin{table*}[htbp]
-\centering
-\caption{Percentage where model error $<$ market error. Bold = $>$50\%.}
-\label{tab:convergence_speed}
-\small
-\begin{tabular}{lrrrrr}
-\toprule
-\textbf{Model} & \textbf{Open+1} & \textbf{25\%} & \textbf{50\%} & \textbf{75\%} & \textbf{Close-1} \\
-\midrule
-Claude Opus 4.5 & 50.0\% & 49.3\% & 41.3\% & 44.0\% & 31.3\% \\
-GPT-5.2-xhigh & 50.0\% & 43.3\% & 36.7\% & 34.7\% & 36.0\% \\
-Gemini 3 Pro & \textbf{56.7\%} & 49.3\% & \textbf{50.7\%} & 48.7\% & 42.7\% \\
-Grok 4.1-fast & \textbf{56.7\%} & \textbf{54.0\%} & 48.0\% & 39.3\% & 46.0\% \\
-Kimi-k2 & 50.0\% & 47.3\% & 34.7\% & 37.3\% & 35.3\% \\
-Kimi-k2.5 & 46.7\% & 47.3\% & 35.3\% & 34.7\% & 35.3\% \\
-DeepSeek v3.2 & 44.0\% & 34.0\% & 30.7\% & 27.3\% & 31.3\% \\
-Intellect-3 & 48.0\% & 34.7\% & 30.7\% & 32.7\% & 20.7\% \\
-Trinity Large & 47.3\% & 44.0\% & 41.3\% & 38.7\% & 22.7\% \\
-Qwen3-235B & 46.7\% & 40.0\% & 30.0\% & 32.7\% & 28.7\% \\
-\bottomrule
-\end{tabular}
-\end{table*}
-
-\FloatBarrier
+%==============================================================================
 \section{Discussion}
+%==============================================================================
 
-\subsection{Temporal Task Routing}
+\subsection{From ``forecasting'' to \emph{selective decision}: when to defer to markets}
 
-Deploy LLMs for early-stage forecasts (Open+1, 25\%) where positive BSS demonstrates value over sparse market information; defer to markets for late-stage forecasts where continuous trading has aggregated real-time information. The degradation is not calibration failure—it is information staleness: periodic web search cannot match continuous market updates.
+Our results suggest the correct abstraction is not ``LLMs vs.\ markets,'' but a \emph{selective decision policy} that chooses when to (i) forecast, (ii) search then forecast, or (iii) \emph{defer} to the market price. This is closely related to selective prediction / classification-with-rejection, where a system trades coverage for lower risk and more reliable probabilistic outputs \citep{geifman2017selective, franc2023reject, cortes2016reject, cortes2024reject, mao2024abstain}. In our setting, deference corresponds to using the contemporaneous market-implied probability as a default baseline, consistent with the view that prediction markets often produce well-calibrated probabilistic forecasts in many domains \citep{wolfers2004prediction, arrow2008promise, plott2002information, manski2006interpreting, ottaviani2007aggregation}. This perspective turns HADC-Bench into a problem of learning a gating function $g(x)\in\{\textsc{defer},\textsc{predict},\textsc{search}\}$ (and a search budget) that optimizes a proper scoring objective \citep{gneiting2007proper}. A practical implication is that evaluating \emph{coverage--risk} tradeoffs (rather than unconditional BSS alone) may be the most decision-relevant summary for deployment \citep{geifman2017selective, franc2023reject}.
+
+\subsection{Why temporal crossover is expected: aggregation, frictions, and underreaction}
+
+The monotonic late-stage degradation is consistent with classic theories of information aggregation and frictions. In prediction markets, prices can aggregate dispersed private information and heterogeneous beliefs \citep{wolfers2004prediction, plott2002information, ottaviani2007aggregation, manski2006interpreting}. However, early in a contract's life, liquidity and participation can be thin, and prices may underreact to public signals due to limited attention, participation constraints, or capital frictions \citep{ottaviani2007aggregation, shleifer1997limits, delong1990noise}. Such frictions are precisely where web-enabled agents can add value by surfacing public evidence that is available but not yet priced, analogous to documented underreaction dynamics in bounded/limited-participation settings \citep{ottaviani2007aggregation, shleifer1997limits}. As resolution approaches, markets typically incorporate real-time signals quickly and the marginal value of sporadic web retrieval shrinks, while the market increasingly reflects a high-frequency aggregation process that is hard to match without comparable streaming data access \citep{wolfers2004prediction, arrow2008promise}. This framing also clarifies why domains plausibly differ: categories with stronger private-information components or correlated noise-trader dynamics can be harder for web agents to beat late in time \citep{delong1990noise, shleifer1997limits, ottaviani2007aggregation}.
+
+\subsection{Tool access is \emph{not} monotone: retrieval can increase variance and miscalibration}
+
+The finding that search sometimes \emph{hurts} is consistent with emerging evidence that tool use can systematically distort confidence and calibration in agentic workflows. Evidence tools (like web search) can inject noisy, conflicting, or low-veracity signals that increase variance and induce overconfident errors unless the agent has strong verification or calibration mechanisms \citep{xuan2026confidence}. Separately, increasing test-time reasoning budgets can degrade calibration even when accuracy does not improve, producing overconfident failures beyond modest inference budgets \citep{lacombe2025dontthinktwice, pawitan2024confidence}. These complement earlier tool-use optimism (e.g., learning to call tools) by implying that the benefit of retrieval depends on \emph{tool-type} and \emph{control policies} \citep{schick2023toolformer, xuan2026confidence}. Our ``search Goldilocks'' result is consistent with diminishing returns and potential noise-chasing: additional queries can add redundancy and contradictory evidence, increasing epistemic variance rather than signal \citep{xuan2026confidence}. A direct design implication is to treat search as a budgeted resource with stopping rules based on marginal information gain (or retrieval agreement), to add explicit consistency/verification checks \citep{paleka2024consistency}, and to incorporate post-retrieval calibration/regularization to prevent unjustified confidence inflation \citep{gneiting2007proper, guo2017calibration, damani2025binaryrewards, xuan2026confidence}.
+
+\subsection{Ensembling and market--model hybrids: why simple averages help}
+
+That a two-model average reduces BSS loss is consistent with the forecasting-combination literature: combining partially independent predictors often reduces mean squared error, and simple averaging can be robust to weight misspecification \citep{bates1969combination, clemen1989combining, bunn1988combining, demenezes2000combining}. In our setting, the most principled hybrid is a conditional ensemble of (market, model A, model B) where weights depend on temporal position and difficulty, echoing the idea that combination rules should adapt to error structure and regime \citep{demenezes2000combining, clemen1989combining}. This yields a concrete, deployable research direction: learn conditional weights (or a gating policy) that maximize proper scoring rules while controlling calibration and abstention behavior \citep{gneiting2007proper, geifman2017selective, franc2023reject}.
+
+\subsection{Implications for ``responsible deployment'' as \emph{statistical reliability}}
+
+In finance-facing settings, ``responsible deployment'' reduces to measurable statistical properties: calibrated probabilities, explicit abstention/deference, and regime-aware operation. Proper scoring rules provide the correct optimization and evaluation target for probabilistic forecasts \citep{gneiting2007proper}, while calibration theory and post-hoc calibration methods formalize how to map model scores into reliable probabilities \citep{guo2017calibration, platt1999probabilistic, kuleshov2018calibrated}. Conformal prediction provides complementary distribution-free reliability guarantees in the form of valid uncertainty sets, suggesting a path to uncertainty-aware deference policies even under distribution shift \citep{shafer2008conformal}. The takeaway is that the benchmark’s ``when-to-trust'' question can be formalized as learning a reliability-aware decision layer on top of agentic forecasting, grounded in proper scoring, calibration, and abstention theory \citep{gneiting2007proper, geifman2017selective, cortes2024reject, xuan2026confidence}.
 
 \subsection{Limitations}
 
-\textbf{Dataset:} 150 markets represent a sample; excluding $<$\$5k volume may miss tail markets. \textbf{Granularity:} 5 checkpoints are coarse; finer evaluation would reveal exact crossover points. \textbf{Models:} 10 models miss competitors (GPT-o3, Claude Sonnet 4) that may differ. \textbf{Tools:} Web search only; richer tools might extend LLM advantage.
+\textbf{Scale and statistical power.} 150 markets support strong directional conclusions but limit power for fine-grained interaction effects (category $\times$ time-to-close $\times$ difficulty). Larger samples would support tighter uncertainty estimates and more stable learned gating/weighting policies \citep{geifman2017selective, demenezes2000combining}.
+
+\textbf{Market-price baseline heterogeneity.} Market prices embed heterogeneous belief aggregation and may underreact depending on budget constraints or participation limits; thus the ``information-sparse'' regime likely varies with liquidity/participation and contract microstructure \citep{manski2006interpreting, ottaviani2007aggregation, shleifer1997limits}.
+
+\textbf{Tooling scope.} We study web search as an evidence tool; the literature suggests verification tools can qualitatively change calibration dynamics relative to evidence-only retrieval \citep{xuan2026confidence}. Richer tool suites (structured data + verification) may shift the crossover.
+
+\textbf{Outcome skew and contract design.} Class imbalance (NO-heavy outcomes) can interact with conservative prediction strategies and calibration; alternative scoring rules and stratified calibration plots can stress-test robustness \citep{gneiting2007proper, guo2017calibration}.
 
 \subsection{Future Work}
 
-\textbf{RLMF post-training:} Fine-tune models on prediction tasks with BSS rewards to learn when to defer to markets. \textbf{Hybrid systems:} Combine LLM reasoning, human judgment, and market aggregation—Claude's 69.2\% contrarian accuracy suggests models find information markets miss. \textbf{Expanded benchmarking:} Scale to thousands of markets, continuous-valued predictions, and international coverage.
+\textbf{Learn the gate.} Learn a policy $g(x)$ that chooses \textsc{defer}/\textsc{predict}/\textsc{search} and sets a retrieval budget, optimizing proper scoring rules while controlling calibration and abstention \citep{gneiting2007proper, geifman2017selective, franc2023reject, xuan2026confidence}.
+
+\textbf{Streaming forecasters.} Replace one-shot retrieval with periodic updates and sequential decision-making, aligning agent updates with the market’s continuous aggregation while explicitly managing variance and calibration drift \citep{ottaviani2007aggregation, xuan2026confidence}.
+
+\textbf{Mechanism-aware training sandboxes.} Many prediction markets rely on market-making mechanisms such as LMSR; integrating mechanism design and learning could enable controlled experiments on aggregation efficiency and agent impact \citep{hanson2003combinatorial, plott2002information}.
+
+\textbf{Market--model combination rules.} Extend from fixed averages to conditional combination schemes informed by forecast-combination theory and abstention, with guarantees on calibration/coverage \citep{bates1969combination, clemen1989combining, demenezes2000combining, shafer2008conformal}.
+
+\bibliography{references}
+\bibliographystyle{iclr2026_conference}
 
 \end{document}
